@@ -3,6 +3,7 @@ dist/
 obj/
 Debug/
 Release/
+release/
 *.asi
 *.dll
 *.exe
