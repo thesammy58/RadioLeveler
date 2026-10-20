@@ -17,19 +17,16 @@ RadioLeveler measures each song while it plays and steers it to one target loudn
 ## Install
 
 1. Make sure you have an ASI loader in `The Sims 3\Game\Bin`, for example [Ultimate ASI Loader](https://github.com/ThirteenAG/Ultimate-ASI-Loader/releases/latest) or the one that comes with [Smooth Patch](https://modthesims.info/d/658759/smooth-patch-2-1.html).
-2. Download the latest zip from [Releases](../../releases). It has two folders:
+2. Download the zip from the latest [release](../../releases). It has two folders:
    - `Game\Bin`: copy its files into `The Sims 3\Game\Bin`.
    - `Mods\Packages`: copy `RadioLeveler.package` into `Documents\Electronic Arts\The Sims 3\Mods\Packages`.
 3. Launch the game, turn on a stereo, and open `RadioLeveler.log` in `Game\Bin`. A line per song, like `radio #1 on (2ch 48000 Hz)`, means it's working.
 
-What's in `Game\Bin`:
-- **`RadioLeveler.asi`** is the mod.
-- **`RadioLeveler.ini`** holds the settings. If you're upgrading and have changed yours, keep your copy.
-- **`RadioLeveler.pdb`** holds debug symbols and is optional. Keep it next to the `.asi` if you use a debugger or crash logger, so it can show this mod's function names.
+`Game\Bin` holds the mod, `RadioLeveler.asi`, and its settings, `RadioLeveler.ini`. If you're upgrading and have changed your `.ini`, keep your copy.
 
 Both the `.asi` and the `.package` are needed. With only one installed, the game plays exactly as vanilla.
 
-To uninstall, delete `RadioLeveler.asi`, `.ini`, `.pdb` and `.log` from `Game\Bin`, and `RadioLeveler.package` from `Mods\Packages`.
+To uninstall, delete `RadioLeveler.asi`, `.ini` and `.log` from `Game\Bin`, and `RadioLeveler.package` from `Mods\Packages`.
 
 The release downloads are built automatically by GitHub from the source code in this repository, so what you download matches the code you can read here.
 
@@ -110,13 +107,15 @@ About 0.1 % of one CPU core per playing radio, on the game's audio thread, and a
 
 ## Building
 
-- **Clang with MinGW-w64 (what releases use):** run `./build.sh` to get `dist/RadioLeveler.asi`, `dist/RadioLeveler.pdb` and `dist/RadioLeveler.ini`. Then `python3 tools/make_release.py` packs the release zip.
-  - Releases use [llvm-mingw 20260922](https://github.com/mstorsjo/llvm-mingw/releases/tag/20260922) (msvcrt). With it the build is reproducible: you get byte-identical files, so you can check a download against `SHA256SUMS.txt`.
-  - Without llvm-mingw, `build.sh` uses the system Clang. On Debian or Ubuntu, install it with `sudo apt-get install clang lld g++-mingw-w64-i686-win32`.
-- **Visual Studio:** open `RadioLeveler.slnx` and build Release | x86. The output is already named `.asi`. The Visual Studio build hasn't been tested in game yet.
-- **The package:** `python3 tools/make_package.py` regenerates `package/RadioLeveler.package` from the voice template text.
-- **The default ini:** `RadioLeveler.ini` must match the defaults built into the ASI. `python3 tools/sync_ini.py --write` regenerates it from the source.
-- **Tests:** [tests/README.md](tests/README.md) covers them, including how to measure the leveler on your own music.
+Open `RadioLeveler.slnx` in Visual Studio 2026 and build **Release | x86**. You get `Release\RadioLeveler.asi` and its debug symbols, `Release\RadioLeveler.pdb`. Releases are built the same way by GitHub Actions.
+
+Releases don't include a `.pdb`. If you want debug symbols, build it yourself and use your `.asi` together with its `.pdb`: a `.pdb` only matches the `.asi` from the same build.
+
+The rest of the repository:
+- **`package/RadioLeveler.package`** is generated from the voice template text by `python tools/make_package.py`.
+- **`RadioLeveler.ini`** must match the defaults built into the ASI. `python tools/sync_ini.py --write` regenerates it from the source.
+- **`python tools/make_release.py`** packs the release zip from your build.
+- **Tests** are described in [tests/README.md](tests/README.md), including how to measure the leveler on your own music. GitHub Actions runs the plug-in test (`tests/abi_test.vcxproj`) on every build.
 
 Version history is in [CHANGELOG.md](CHANGELOG.md).
 
@@ -131,11 +130,11 @@ This mod was designed and built in a series of conversations with Claude, Anthro
 
 **Me (thesammy58)**
 - Came up with the idea and supplied the game files, the reference mods and the memory dump.
-- Tested every build in game, decided how it should behave, and tuned the default settings by ear.
+- Tested every build in game, including the Visual Studio build, decided how it should behave, and tuned the default settings by ear.
 
-**What's verified:** in game on EA App 1.69.47, alongside other ASI mods: song-by-song leveling, skips, and switching it off and on with the hotkey. The Steam executable was checked to contain the same audio code.
+**What's verified:** in game on EA App 1.69.47 with the Visual Studio build, alongside other ASI mods: song-by-song leveling, skips, and switching it off and on with the hotkey. The Steam executable was checked to contain the same audio code.
 
-**What isn't yet:** Steam and disc builds in game, and the Visual Studio build.
+**What isn't yet:** Steam and disc builds in game.
 
 Commits written by Claude carry a `Co-Authored-By: Claude` line.
 

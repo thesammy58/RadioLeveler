@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 thesammy58
 // Written with Claude, Anthropic's AI model; see "How this was made" in README.md.
-/* abi_test.cpp - build as TS3.exe next to RadioLeveler.asi and run (Windows or Wine).
+/* abi_test.cpp - build as TS3.exe (the ASI only wakes up inside TS3.exe / TS3W.exe) and run it
+ * on Windows or Wine:  TS3.exe [path\to\RadioLeveler.asi]   (default: next to TS3.exe)
+ * tests\abi_test.vcxproj builds it with Visual Studio. It exits non-zero on failure.
  * Emulates the RWAudioCore side of the Compressor1 plug-in ABI: a fake Co10 descriptor in
  * .data, instance allocation through GetSize/Init, and Process calls with the ping-pong
  * buffer context. Checks that the ASI hooks the descriptor, that its output matches a
@@ -59,13 +61,14 @@ static void make_block(long blk, float* l, float* r) {
     }
 }
 
-int main() {
+int main(int argc, char** argv) {
     setvbuf(stdout, nullptr, _IONBF, 0);
     int fails = 0;
-    char dir[MAX_PATH]; GetModuleFileNameA(nullptr, dir, MAX_PATH); *(strrchr(dir, '\\') + 1) = 0;
-    char ini[MAX_PATH]; snprintf(ini, MAX_PATH, "%sRadioLeveler.ini", dir);
+    char asi[MAX_PATH];
+    if (argc > 1) GetFullPathNameA(argv[1], MAX_PATH, asi, nullptr);
+    else { GetModuleFileNameA(nullptr, asi, MAX_PATH); strcpy(strrchr(asi, '\\') + 1, "RadioLeveler.asi"); }
+    char ini[MAX_PATH]; strcpy(ini, asi); strcpy(strrchr(ini, '\\') + 1, "RadioLeveler.ini");   /* the ASI reads the ini next to itself */
     DeleteFileA(ini);
-    char asi[MAX_PATH]; snprintf(asi, MAX_PATH, "%sRadioLeveler.asi", dir);
     if (!LoadLibraryA(asi)) { printf("FAIL load %s (%lu)\n", asi, GetLastError()); return 1; }
     for (int i = 0; i < 100 && g_desc.process == (void*)&StockProcess; i++) Sleep(100);
     if (g_desc.process == (void*)&StockProcess) { printf("FAIL: descriptor not hooked\n"); return 1; }

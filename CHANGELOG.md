@@ -13,7 +13,7 @@ First public release.
   An existing `RadioLeveler.ini` keeps its own values. Delete it to get the new defaults.
 - **Strength presets renamed** to `standard`, `relaxed`, `light` and `subtle`. The old names still work: `max`, `strong`, `balanced` and `gentle`.
 - **`Logging=0`** stops the mod writing `RadioLeveler.log` at all. The log also starts over if it passes 256 KB.
-- **Releases include `RadioLeveler.pdb`** (debug symbols) and the default `RadioLeveler.ini`, and are built by GitHub Actions from the tagged source.
+- **Releases include the default `RadioLeveler.ini`** next to the `.asi`, and are built with Visual Studio by GitHub Actions from the tagged source.
 - MIT license, Visual Studio project, documentation.
 
 ## 1.2.2

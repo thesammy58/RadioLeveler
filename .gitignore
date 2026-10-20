@@ -1,7 +1,6 @@
 # Build output
 dist/
 obj/
-release/
 Debug/
 Release/
 *.asi
